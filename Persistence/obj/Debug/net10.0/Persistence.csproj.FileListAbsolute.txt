@@ -1,0 +1,16 @@
+/Users/kehindetomiwa/Documents/WebDev/dotnet/tutorial/react_csharp/Reactivities/Persistence/bin/Debug/net10.0/Persistence.deps.json
+/Users/kehindetomiwa/Documents/WebDev/dotnet/tutorial/react_csharp/Reactivities/Persistence/bin/Debug/net10.0/Persistence.dll
+/Users/kehindetomiwa/Documents/WebDev/dotnet/tutorial/react_csharp/Reactivities/Persistence/bin/Debug/net10.0/Persistence.pdb
+/Users/kehindetomiwa/Documents/WebDev/dotnet/tutorial/react_csharp/Reactivities/Persistence/bin/Debug/net10.0/Domain.dll
+/Users/kehindetomiwa/Documents/WebDev/dotnet/tutorial/react_csharp/Reactivities/Persistence/bin/Debug/net10.0/Domain.pdb
+/Users/kehindetomiwa/Documents/WebDev/dotnet/tutorial/react_csharp/Reactivities/Persistence/obj/Debug/net10.0/Persistence.csproj.AssemblyReference.cache
+/Users/kehindetomiwa/Documents/WebDev/dotnet/tutorial/react_csharp/Reactivities/Persistence/obj/Debug/net10.0/Persistence.GeneratedMSBuildEditorConfig.editorconfig
+/Users/kehindetomiwa/Documents/WebDev/dotnet/tutorial/react_csharp/Reactivities/Persistence/obj/Debug/net10.0/Persistence.AssemblyInfoInputs.cache
+/Users/kehindetomiwa/Documents/WebDev/dotnet/tutorial/react_csharp/Reactivities/Persistence/obj/Debug/net10.0/Persistence.AssemblyInfo.cs
+/Users/kehindetomiwa/Documents/WebDev/dotnet/tutorial/react_csharp/Reactivities/Persistence/obj/Debug/net10.0/Persistence.csproj.CoreCompileInputs.cache
+/Users/kehindetomiwa/Documents/WebDev/dotnet/tutorial/react_csharp/Reactivities/Persistence/obj/Debug/net10.0/Persistence.sourcelink.json
+/Users/kehindetomiwa/Documents/WebDev/dotnet/tutorial/react_csharp/Reactivities/Persistence/obj/Debug/net10.0/Persiste.61C28332.Up2Date
+/Users/kehindetomiwa/Documents/WebDev/dotnet/tutorial/react_csharp/Reactivities/Persistence/obj/Debug/net10.0/Persistence.dll
+/Users/kehindetomiwa/Documents/WebDev/dotnet/tutorial/react_csharp/Reactivities/Persistence/obj/Debug/net10.0/refint/Persistence.dll
+/Users/kehindetomiwa/Documents/WebDev/dotnet/tutorial/react_csharp/Reactivities/Persistence/obj/Debug/net10.0/Persistence.pdb
+/Users/kehindetomiwa/Documents/WebDev/dotnet/tutorial/react_csharp/Reactivities/Persistence/obj/Debug/net10.0/ref/Persistence.dll

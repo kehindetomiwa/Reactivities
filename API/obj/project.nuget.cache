@@ -1,24 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "6YJ8NxZ7mKU=",
+  "dgSpecHash": "Jz9E5oDdgXE=",
   "success": true,
   "projectFilePath": "/Users/kehindetomiwa/Documents/WebDev/dotnet/tutorial/react_csharp/Reactivities/API/API.csproj",
-  "expectedPackageFiles": [
-    "/Users/kehindetomiwa/.nuget/packages/microsoft.aspnetcore.openapi/10.0.3/microsoft.aspnetcore.openapi.10.0.3.nupkg.sha512",
-    "/Users/kehindetomiwa/.nuget/packages/microsoft.openapi/2.0.0/microsoft.openapi.2.0.0.nupkg.sha512"
-  ],
-  "logs": [
-    {
-      "code": "NU1903",
-      "level": "Warning",
-      "message": "Package 'Microsoft.OpenApi' 2.0.0 has a known high severity vulnerability, https://github.com/advisories/GHSA-v5pm-xwqc-g5wc",
-      "projectPath": "/Users/kehindetomiwa/Documents/WebDev/dotnet/tutorial/react_csharp/Reactivities/API/API.csproj",
-      "warningLevel": 1,
-      "filePath": "/Users/kehindetomiwa/Documents/WebDev/dotnet/tutorial/react_csharp/Reactivities/API/API.csproj",
-      "libraryId": "Microsoft.OpenApi",
-      "targetGraphs": [
-        "net10.0"
-      ]
-    }
-  ]
+  "expectedPackageFiles": [],
+  "logs": []
 }
