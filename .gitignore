@@ -76,6 +76,13 @@ StyleCopReport.xml
 
 # Files built by Visual Studio
 API/obj
+Application/obj
+Domain/obj
+Persistence/obj
+API/bin
+Application/bin
+Domain/bin
+
 
 # App settings
 API/appsettings.json
