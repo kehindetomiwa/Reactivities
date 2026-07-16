@@ -76,6 +76,9 @@ StyleCopReport.xml
 
 # Files built by Visual Studio
 API/obj
+
+# App settings
+API/appsettings.json
 *_i.c
 *_p.c
 *_h.h
