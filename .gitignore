@@ -79,6 +79,9 @@ API/obj
 
 # App settings
 API/appsettings.json
+
+# SQLite database
+*.db
 *_i.c
 *_p.c
 *_h.h
