@@ -82,6 +82,8 @@ Persistence/obj
 API/bin
 Application/bin
 Domain/bin
+API/reactivies.db-shm
+API/reactivies.db-wal
 
 
 # App settings
