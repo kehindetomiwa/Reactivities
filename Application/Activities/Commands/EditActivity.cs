@@ -1,4 +1,5 @@
 using System;
+using AutoMapper;
 using Domain;
 using MediatR;
 using Persistence;
@@ -12,7 +13,7 @@ public class EditActivity
         public required Activity Activity { get; set; }
     }
 
-    public class Handler(AppDbContext context) : IRequestHandler<Command>
+    public class Handler(AppDbContext context, IMapper mapper) : IRequestHandler<Command>
     {
         public async Task Handle(Command request, CancellationToken cancellationToken)
         {
@@ -20,17 +21,7 @@ public class EditActivity
             .FindAsync([request.Activity.Id], cancellationToken)
             ?? throw new Exception("Activity not found");
 
-           
-            activity.Title = request.Activity.Title;
-            activity.Description = request.Activity.Description;
-            activity.Category = request.Activity.Category;
-            activity.Date = request.Activity.Date;
-            activity.City = request.Activity.City;
-            activity.Venue = request.Activity.Venue;
-            activity.IsCancelled = request.Activity.IsCancelled;
-            activity.Latitude = request.Activity.Latitude;
-            activity.Longitude = request.Activity.Longitude;
-
+            mapper.Map(request.Activity, activity);
             await context.SaveChangesAsync(cancellationToken);
         }
     }
