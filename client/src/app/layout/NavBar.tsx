@@ -3,15 +3,28 @@ import {
   Box,
   Toolbar,
   Typography,
-  Button,
   Container,
+  Button,
 } from "@mui/material";
 import Group from "@mui/icons-material/Group";
-type Props = {
-  openForm: () => void;
+import { NavLink } from "react-router";
+
+const navLinks = [
+  { title: "Activities", path: "/activities" },
+  { title: "Create Activity", path: "/createActivity" },
+];
+
+const navStyles = {
+  color: "inherit",
+  textTransform: "uppercase",
+  fontSize: "1.2rem",
+  fontWeight: "bold",
+  "&.active": {
+    color: "#F9E8A2",
+  },
 };
 
-export default function NavBar({ openForm }: Props) {
+export default function NavBar() {
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar
@@ -23,34 +36,29 @@ export default function NavBar({ openForm }: Props) {
       >
         <Container maxWidth="xl">
           <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
-            <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+            <Button
+              component={NavLink}
+              to="/"
+              sx={{ display: "flex", alignItems: "center", gap: 1 }}
+            >
               <Group fontSize="large" />
-              <Typography variant="h4" sx={{ flexGrow: 1, fontWeight: "bold" }}>
+              <Typography
+                variant="h4"
+                sx={{ color: "inherit", fontWeight: "bold" }}
+              >
                 Reactivities
               </Typography>
-            </Box>
-            <Box sx={{ display: "flex", gap: 4 }}>
-              {["Activities", "About", "Contact"].map((item) => (
-                <Typography
-                  key={item}
-                  sx={{
-                    fontSize: "1.2rem",
-                    textTransform: "uppercase",
-                    fontWeight: "bold",
-                  }}
-                >
-                  {item}
-                </Typography>
+            </Button>
+
+            <Box sx={{ display: "flex", gap: 2 }}>
+              {navLinks.map(({ title, path }) => (
+                <Button key={path} component={NavLink} to={path} sx={navStyles}>
+                  {title}
+                </Button>
               ))}
             </Box>
-            <Button
-              size="large"
-              color="warning"
-              variant="contained"
-              onClick={openForm}
-            >
-              Create Activity
-            </Button>
+
+            <Button sx={navStyles}>User Menu</Button>
           </Toolbar>
         </Container>
       </AppBar>

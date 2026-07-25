@@ -8,13 +8,13 @@ import {
   Typography,
 } from "@mui/material";
 import { useActivities } from "../../../lib/hooks/useActivities";
+import { Link } from "react-router";
 
 type Props = {
   activity: Activity;
-  selectActivity: (id: string) => void;
 };
 
-export default function ActivityCard({ activity, selectActivity }: Props) {
+export default function ActivityCard({ activity }: Props) {
   const { deleteActivity } = useActivities();
   return (
     <Card>
@@ -34,7 +34,8 @@ export default function ActivityCard({ activity, selectActivity }: Props) {
         <Chip label={activity.category} variant="outlined" />
         <Box sx={{ display: "flex", gap: 1 }}>
           <Button
-            onClick={() => selectActivity(activity.id)}
+            component={Link}
+            to={`/activities/${activity.id}`}
             size="medium"
             variant="contained"
           >
