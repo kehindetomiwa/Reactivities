@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project status
 
-Tutorial project (.NET 10 + React) implementing `Activity` CRUD end-to-end. The backend now uses **CQRS via MediatR** (the `Application` layer mediates between controllers and `AppDbContext`), with AutoMapper wired in. The client is a **feature-based React app** using TanStack Query (React Query) for server state, an axios agent, and a `useActivities` hook. There is no auth, routing, or domain beyond `Activity` yet; the only entity is `Activity`. No test projects exist on either side.
+Tutorial project (.NET 10 + React) implementing `Activity` CRUD end-to-end. The backend uses **CQRS via MediatR** (the `Application` layer mediates between controllers and `AppDbContext`), with AutoMapper wired in. The client is a **feature-based React app** using **react-router** for navigation, **TanStack Query** for server state (via a `useActivities` hook + axios agent), and **MobX** for client/UI state. There is no auth, and the only domain entity is `Activity`. No test projects exist on either side.
 
 ## Commands
 
@@ -68,19 +68,19 @@ All four projects target **net10.0** with nullable + implicit usings enabled.
 
 ## Client architecture (`client/`)
 
-Vite + React 19 + TypeScript, MUI (`@mui/material` v9) for components, **TanStack Query** for server state, axios for HTTP.
+Vite + React 19 + TypeScript, MUI (`@mui/material` v9) for components, **TanStack Query** for server state, **MobX** for UI state, **react-router** (v8) for navigation, axios for HTTP.
 
-- **`src/main.tsx`** wraps `<App/>` in `QueryClientProvider` (+ React Query Devtools).
-- **`src/lib/api/agent.ts`** — a shared axios instance (`baseURL` from `import.meta.env.VITE_API_URL`, set in `client/.env.development` to `https://localhost:5001/api`). A response interceptor adds a deliberate **1-second `sleep`** to every request to exercise loading states — remove/adjust it if it gets in the way.
-- **`src/lib/hooks/useActivities.ts`** — the data layer. Exposes the `activities` query plus `createActivity`/`updateActivity`/`deleteActivity` mutations, each invalidating the `["activities"]` query key on success. Add new server interactions here rather than calling axios from components.
-- **`src/features/activities/{dashboard,details,form}/`** — feature components (`ActivityDashboard`, `ActivityList`, `ActivityCard`, `ActivityDetails`, `ActivityForm`).
-- **`src/app/layout/`** — `App.tsx`, `NavBar.tsx`, global styles.
-
-State/UI flow: `App.tsx` holds `selectedActivity` / `editMode` in `useState` and **props-drills** handlers down through the dashboard. The commit history flags this as temporary ("using props drilling ... to be changed"); prefer moving new shared UI state up or into hooks/context rather than deepening the drilling.
+- **`src/main.tsx`** wraps the router in `StoreContext.Provider` → `QueryClientProvider` (+ React Query Devtools) → `RouterProvider`.
+- **`src/app/router/Routes.tsx`** — the single `createBrowserRouter` route table. `App` is the layout route; children are `""` (HomePage), `activities` (dashboard), `activities/:id` (detail), `createActivity` + `manage/:id` (both `ActivityForm`, the create route passing `key="create"` to force a fresh form), and `counter`. Navigation and the selected activity come from the **URL/route params**, not props — this replaced the earlier props-drilling.
+- **`src/lib/api/agent.ts`** — a shared axios instance (`baseURL` from `import.meta.env.VITE_API_URL`, set in `client/.env.development` to `https://localhost:5001/api`). Its interceptors also drive the global loading bar: the **request** interceptor calls `store.uiStore.isBusy()` and the **response** interceptor adds a deliberate **1-second `sleep`** (to exercise loading states) then calls `store.uiStore.isIdle()` in `finally`.
+- **`src/lib/stores/`** — MobX stores. `store.ts` composes `counterStore` + `uiStore` into a single `store` object exposed via `StoreContext`; access it with the `useStore()` hook (`src/lib/hooks/useStores.ts`). `uiStore.isLoading` backs the `LinearProgress` bar in `NavBar` (wrapped in `<Observer>` from `mobx-react-lite`). `counterStore` is a demo store for the `/counter` page.
+- **`src/lib/hooks/useActivities.ts`** — the data layer. Takes an optional `id`: with no `id` it runs the `["activities"]` list query (gated on `location.pathname === "/activities"`); with an `id` it runs the `["activities", id]` detail query. Also exposes `createActivity`/`updateActivity`/`deleteActivity` mutations, each invalidating `["activities"]` on success. Add new server interactions here rather than calling axios from components.
+- **`src/features/activities/{dashboard,details,form}/`** — feature components. `details/` is decomposed into `ActivityDetailPage` + `ActivityDetailsHeader`/`Info`/`Sidebar`/`Chat`.
+- **`src/app/layout/`** — `App.tsx` (renders `HomePage` at `/`, otherwise `NavBar` + an `<Outlet/>`), `NavBar.tsx`, global styles.
 
 Shared types are hand-kept in `src/lib/types/index.d.ts` as a **global ambient** `Activity` type (no import needed, must stay in sync with `Domain/Activity.cs` manually).
 
-**Inconsistency to watch:** the GET query in `useActivities` uses a hardcoded absolute URL (`https://localhost:5001/api/activities`) while the mutations use the agent's relative paths (`/activities`). Prefer the relative form so `VITE_API_URL` stays the single source of truth.
+**Known rough edge:** the axios `response` interceptor only defines a fulfilled handler (no rejected handler), so a failed request never reaches its `finally` and `uiStore.isLoading` can stay stuck on `true` after an error.
 
 ### Notable tooling
 
