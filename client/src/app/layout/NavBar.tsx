@@ -9,7 +9,6 @@ import {
 } from "@mui/material";
 import Group from "@mui/icons-material/Group";
 import { NavLink } from "react-router";
-import { UiStore } from "../../lib/stores/uiStore";
 import { useStore } from "../../lib/hooks/useStores";
 import { Observer } from "mobx-react-lite";
 
@@ -17,6 +16,7 @@ const navLinks = [
   { title: "Activities", path: "/activities" },
   { title: "Create Activity", path: "/createActivity" },
   { title: "Counter", path: "/counter" },
+  { title: "TestErrors", path: "/errors" },
 ];
 
 const navStyles = {
