@@ -1,100 +1,83 @@
-import { Box, Button, Paper, TextField, Typography } from "@mui/material";
-import type { FormEvent } from "react";
+import { Box, Button, Paper, Typography } from "@mui/material";
 import { useActivities } from "../../../lib/hooks/useActivities";
 import { useNavigate, useParams } from "react-router";
+import { useForm } from "react-hook-form";
+import { useEffect } from "react";
+import {
+  activitySchema,
+  type ActivitySchema,
+} from "../../../lib/Schemas/ActivitySchema";
+import { zodResolver } from "@hookform/resolvers/zod";
+import TextInput from "../../../app/shared/components/TextInput";
+import SelectInput from "../../../app/shared/components/SelectInput";
+import { categoryOptions } from "./categoryOptions";
+import DateTimeInput from "../../../app/shared/components/DateTimeInput";
 
 export default function ActivityForm() {
-  const {id} = useParams();
-  const { updateActivity, createActivity, activity, isLoadingActivity } = useActivities(id);
+  const { reset, handleSubmit, control } = useForm<ActivitySchema>({
+    mode: "onTouched",
+    resolver: zodResolver(activitySchema),
+  });
+
   const navigate = useNavigate();
+  const { id } = useParams();
+  const { updateActivity, createActivity, activity, isLoadingActivity } =
+    useActivities(id);
 
-  // datetime-local inputs require "yyyy-MM-ddThh:mm" in *local* time,
-  // not the UTC string that toISOString() produces.
-  const toDateTimeLocal = (date: Date) => {
-    const offsetMs = date.getTimezoneOffset() * 60000;
-    return new Date(date.getTime() - offsetMs).toISOString().slice(0, 16);
-  };
+  useEffect(() => {
+    if (activity) reset({ ...activity, date: new Date(activity.date) });
+  }, [activity, reset]);
 
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const formData = new FormData(event.currentTarget);
-    const data: { [key: string]: FormDataEntryValue } = {};
-    formData.forEach((value, key) => {
-      data[key] = value;
-    });
-    if (activity) {
-      data["id"] = activity.id;
-      await updateActivity.mutateAsync(data as unknown as Activity);
-      navigate(`/activities/${activity.id}`);
-    } else {
-      createActivity.mutate(data as unknown as Activity, {
-        onSuccess: (id) => {
-          navigate(`/activities/${id}`)
-        }
-      });
+  const OnSubmit = async (data: ActivitySchema) => {
+    // The API models `date` as an ISO string; the picker gives us a Date.
+    const payload = { ...data, date: data.date.toISOString() };
+    try {
+      if (activity) {
+        updateActivity.mutate(
+          { ...activity, ...payload },
+          {
+            onSuccess: () => navigate(`/activities/${activity.id}`),
+          }
+        );
+      } else {
+        createActivity.mutate(payload as unknown as Activity, {
+          onSuccess: (id) => navigate(`/activities/${id}`),
+        });
+      }
+    } catch (error) {
+      console.log(error);
     }
   };
 
-  if(isLoadingActivity) return <Typography>Loading Activity...</Typography>
+  if (isLoadingActivity) return <Typography>Loading Activity...</Typography>;
 
   return (
     <Paper sx={{ borderRadius: 3, padding: 2 }}>
       <Typography variant="h5" gutterBottom color="primary">
-        {activity? "Edit Activity": "Create Activity"}
+        {activity ? "Edit Activity" : "Create Activity"}
       </Typography>
       <Box
         component="form"
-        onSubmit={handleSubmit}
+        onSubmit={handleSubmit(OnSubmit)}
         sx={{ display: "flex", flexDirection: "column", gap: 3 }}
       >
-        <TextField
-          name="title"
-          label="Title"
-          defaultValue={activity?.title || ""}
-          variant="outlined"
-          fullWidth
-        />
-        <TextField
-          name="description"
+        <TextInput label="Title" control={control} name="title" />
+        <TextInput
           label="Description"
-          defaultValue={activity?.description || ""}
-          variant="outlined"
-          fullWidth
+          control={control}
+          name="description"
           multiline
           rows={3}
         />
-        <TextField
-          name="category"
+        <SelectInput
+          items={categoryOptions}
           label="Category"
-          defaultValue={activity?.category || ""}
-          variant="outlined"
-          fullWidth
+          control={control}
+          name="category"
         />
-        <TextField
-          name="date"
-          label="Date"
-          defaultValue={toDateTimeLocal(
-            activity?.date ? new Date(activity.date) : new Date()
-          )}
-          variant="outlined"
-          type="datetime-local"
-          fullWidth
-          slotProps={{ inputLabel: { shrink: true } }}
-        />
-        <TextField
-          name="city"
-          label="City"
-          defaultValue={activity?.city || ""}
-          variant="outlined"
-          fullWidth
-        />
-        <TextField
-          name="venue"
-          label="Venue"
-          defaultValue={activity?.venue || ""}
-          variant="outlined"
-          fullWidth
-        />
+        <DateTimeInput label="Date" control={control} name="date" />
+        <TextInput label="City" control={control} name="city" />
+        <TextInput label="Venue" control={control} name="venue" />
 
         <Box sx={{ display: "flex", justifyContent: "end", gap: 3 }}>
           <Button color="inherit" onClick={() => {}}>

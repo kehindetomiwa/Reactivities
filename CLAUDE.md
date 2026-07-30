@@ -68,19 +68,20 @@ All four projects target **net10.0** with nullable + implicit usings enabled.
 
 ## Client architecture (`client/`)
 
-Vite + React 19 + TypeScript, MUI (`@mui/material` v9) for components, **TanStack Query** for server state, **MobX** for UI state, **react-router** (v8) for navigation, axios for HTTP.
+Vite + React 19 + TypeScript, MUI (`@mui/material` v9) for components, **TanStack Query** for server state, **MobX** for UI state, **react-router** (v8) for navigation, axios for HTTP, and **react-hook-form + zod** (via `@hookform/resolvers`) for forms/validation.
 
 - **`src/main.tsx`** wraps the router in `StoreContext.Provider` → `QueryClientProvider` (+ React Query Devtools) → `RouterProvider`.
 - **`src/app/router/Routes.tsx`** — the single `createBrowserRouter` route table. `App` is the layout route; children are `""` (HomePage), `activities` (dashboard), `activities/:id` (detail), `createActivity` + `manage/:id` (both `ActivityForm`, the create route passing `key="create"` to force a fresh form), and `counter`. Navigation and the selected activity come from the **URL/route params**, not props — this replaced the earlier props-drilling.
 - **`src/lib/api/agent.ts`** — a shared axios instance (`baseURL` from `import.meta.env.VITE_API_URL`, set in `client/.env.development` to `https://localhost:5001/api`). Its interceptors also drive the global loading bar: the **request** interceptor calls `store.uiStore.isBusy()` and the **response** interceptor adds a deliberate **1-second `sleep`** (to exercise loading states) then calls `store.uiStore.isIdle()` in `finally`.
 - **`src/lib/stores/`** — MobX stores. `store.ts` composes `counterStore` + `uiStore` into a single `store` object exposed via `StoreContext`; access it with the `useStore()` hook (`src/lib/hooks/useStores.ts`). `uiStore.isLoading` backs the `LinearProgress` bar in `NavBar` (wrapped in `<Observer>` from `mobx-react-lite`). `counterStore` is a demo store for the `/counter` page.
 - **`src/lib/hooks/useActivities.ts`** — the data layer. Takes an optional `id`: with no `id` it runs the `["activities"]` list query (gated on `location.pathname === "/activities"`); with an `id` it runs the `["activities", id]` detail query. Also exposes `createActivity`/`updateActivity`/`deleteActivity` mutations, each invalidating `["activities"]` on success. Add new server interactions here rather than calling axios from components.
-- **`src/features/activities/{dashboard,details,form}/`** — feature components. `details/` is decomposed into `ActivityDetailPage` + `ActivityDetailsHeader`/`Info`/`Sidebar`/`Chat`.
+- **`src/features/activities/{dashboard,details,form}/`** — feature components. `details/` is decomposed into `ActivityDetailPage` + `ActivityDetailsHeader`/`Info`/`Sidebar`/`Chat`. `form/ActivityForm.tsx` uses `useForm` (`mode: "onTouched"`, `zodResolver(activitySchema)`), `reset(activity)` in an effect to populate the edit form, and renders the shared inputs instead of raw `<TextField>`s. `form/categoryOptions.ts` holds the `{text,value}[]` list for the category `SelectInput`.
+- **Forms** — `src/lib/Schemas/` holds zod schemas (`ActivitySchema.ts`; export both `activitySchema` and the inferred `ActivitySchema` type). `src/app/shared/components/` holds reusable react-hook-form field wrappers (`TextInput`, `SelectInput`) that are generic over `<T extends FieldValues>`, take `UseControllerProps<T>` (so pass `control` + `name`), call `useController`, and surface `fieldState.error` as MUI `error`/`helperText`. Build new form fields as wrappers here rather than wiring `useController` in feature components.
 - **`src/app/layout/`** — `App.tsx` (renders `HomePage` at `/`, otherwise `NavBar` + an `<Outlet/>`), `NavBar.tsx`, global styles.
 
 Shared types are hand-kept in `src/lib/types/index.d.ts` as a **global ambient** `Activity` type (no import needed, must stay in sync with `Domain/Activity.cs` manually).
 
-**Known rough edge:** the axios `response` interceptor only defines a fulfilled handler (no rejected handler), so a failed request never reaches its `finally` and `uiStore.isLoading` can stay stuck on `true` after an error.
+**Known rough edges (client):** `ActivityForm`'s form migration is mid-flight — `OnSubmit` currently only `console.log`s and does **not** call `createActivity`/`updateActivity` or navigate yet, and the `Date` field is now a plain text `TextInput` (its old `datetime-local` handling and the `toDateTimeLocal` helper are effectively dead). Also, the axios `response` interceptor only defines a fulfilled handler (no rejected handler), so a failed request never reaches its `finally` and `uiStore.isLoading` can stay stuck on `true` after an error.
 
 ### Notable tooling
 

@@ -1,0 +1,21 @@
+- generic [ref=e2]:
+  - button "Open Tanstack query devtools" [ref=e53] [cursor=pointer]
+  - region "Notifications Alt+T"
+  - generic [ref=e102]:
+    - banner [ref=e104]:
+      - generic [ref=e106]:
+        - link [ref=e107] [cursor=pointer]:
+          - /url: /
+          - heading "Reactivities" [level=4] [ref=e110]
+        - generic [ref=e111]:
+          - link "Activities" [ref=e112] [cursor=pointer]:
+            - /url: /activities
+          - link "Create Activity" [ref=e113] [cursor=pointer]:
+            - /url: /createActivity
+          - link "Counter" [ref=e114] [cursor=pointer]:
+            - /url: /counter
+          - link "TestErrors" [ref=e115] [cursor=pointer]:
+            - /url: /errors
+        - button "User Menu" [ref=e116] [cursor=pointer]
+      - progressbar [ref=e117]
+    - paragraph [ref=e120]: Loading Activity

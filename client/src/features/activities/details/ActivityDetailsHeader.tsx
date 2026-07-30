@@ -1,11 +1,12 @@
 import { Card, Badge, CardMedia, Box, Typography, Button } from "@mui/material";
-import { Link } from "react-router";
+import { Link, useParams } from "react-router";
 
 export default function ActivityDetailsHeader() {
     const isCancelled = false;
     const isHost = true;
     const isGoing = true;
     const loading = false;
+    const { id } = useParams();
 
     return (
         <Card sx={{ position: 'relative', mb: 2, backgroundColor: 'transparent', overflow: 'hidden' }}>
@@ -59,7 +60,7 @@ export default function ActivityDetailsHeader() {
                             variant="contained"
                             color="primary"
                             component={Link}
-                            to={`/manage/activityId`}
+                            to={`/manage/${id}`}
                             disabled={isCancelled}
                         >
                             Manage Event
