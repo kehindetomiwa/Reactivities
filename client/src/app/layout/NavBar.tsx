@@ -11,10 +11,12 @@ import Group from "@mui/icons-material/Group";
 import { NavLink } from "react-router";
 import { useStore } from "../../lib/hooks/useStores";
 import { Observer } from "mobx-react-lite";
+import { useAccount } from "../../lib/hooks/useAccount";
+import MenuItemLink from "../shared/components/MenuItemLink";
+import UserMenu from "./UserMenu";
 
 const navLinks = [
   { title: "Activities", path: "/activities" },
-  { title: "Create Activity", path: "/createActivity" },
   { title: "Counter", path: "/counter" },
   { title: "TestErrors", path: "/errors" },
 ];
@@ -31,6 +33,7 @@ const navStyles = {
 
 export default function NavBar() {
   const { uiStore } = useStore();
+  const { currentUser } = useAccount();
 
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -66,7 +69,17 @@ export default function NavBar() {
               ))}
             </Box>
 
-            <Button sx={navStyles}>User Menu</Button>
+            <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+              {currentUser ? (
+                <>
+                  <UserMenu />
+                </>
+              ) : (
+                <>
+                  <MenuItemLink to="/register">Register</MenuItemLink>
+                </>
+              )}
+            </Box>
           </Toolbar>
         </Container>
         <Observer>

@@ -80,7 +80,12 @@ export default function ActivityForm() {
         <TextInput label="Venue" control={control} name="venue" />
 
         <Box sx={{ display: "flex", justifyContent: "end", gap: 3 }}>
-          <Button color="inherit" onClick={() => {}}>
+          <Button
+            color="inherit"
+            onClick={() =>
+              navigate(activity ? `/activities/${activity.id}` : "/activities")
+            }
+          >
             Cancel
           </Button>
           <Button

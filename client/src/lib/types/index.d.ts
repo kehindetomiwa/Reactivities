@@ -10,3 +10,11 @@ type Activity = {
   latitude: number
   longitude: number
 }
+
+type User = {
+  id: string
+  email: string
+  displayName: string
+  imageUrl?: string
+  
+}

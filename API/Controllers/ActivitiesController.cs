@@ -3,6 +3,7 @@ using Application.Activities.Commands;
 using Application.Activities.DTOs;
 using Application.Activities.Queries;
 using Domain;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -13,13 +14,14 @@ namespace API.Controllers
     ) : BaseApiController
     {
         [HttpGet]
-        public async Task<ActionResult<List<Activity>>> GetActivities()
+        public async Task<ActionResult<List<ActivityDto>>> GetActivities()
         {
             return await Mediator.Send(new GetActivityList.Query());
         }
 
+    
         [HttpGet("{id}")]
-        public async Task<ActionResult<Activity>> GetActivityDetail(string id)
+        public async Task<ActionResult<ActivityDto>> GetActivityDetail(string id)
         {
             // throw new Exception("Server Test error");
             return HandleResult(await Mediator.Send(new GetActivityDetails.Query { Id = id }));
@@ -33,18 +35,26 @@ namespace API.Controllers
             return HandleResult(await Mediator.Send(new CreateActivity.Command { ActivityDto = activityDto }));
         }
 
-        [HttpPut]
-        public async Task<ActionResult> EditActivity(EditActivityDto activityDto)
+        [HttpPut("{id}")]
+        [Authorize(Policy = "IsActivityHost")]
+        public async Task<ActionResult> EditActivity(string id, EditActivityDto activityDto)
         {
-
-            return HandleResult(await Mediator.Send(new EditActivity.Command { ActivityDto = activityDto }));
+            activityDto.Id = id;
+            return HandleResult(await Mediator.Send(new EditActivity.Command {ActivityDto = activityDto }));
 
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Policy = "IsActivityHost")]
         public async Task<ActionResult> DeleteActivity(string id)
         {
             return HandleResult(await Mediator.Send(new DeleteActivity.Command { Id = id }));
+        }
+
+        [HttpPost("{id}/attend")]
+        public async Task<ActionResult> UpdateAttendance(string id)
+        {
+            return HandleResult(await Mediator.Send(new UpdateAttendence.Command { Id = id }));
         }
     }
 }

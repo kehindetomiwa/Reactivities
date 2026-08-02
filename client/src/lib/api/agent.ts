@@ -11,6 +11,9 @@ const sleep = (delay: number) => {
 
 const agent = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
+  // Identity issues its auth cookie cross-origin (:3000 -> :5001); without this
+  // the browser neither stores nor sends it, so login silently has no effect.
+  withCredentials: true,
 });
 
 agent.interceptors.request.use((config) => {
@@ -27,6 +30,13 @@ agent.interceptors.response.use(
   async (error) => {
     await sleep(1000);
     store.uiStore.isIdle();
+
+    // Network/CORS failures have no response; destructuring it would throw here
+    // and mask the original error.
+    if (!error.response) {
+      toast.error("Network error - is the API running?");
+      return Promise.reject(error);
+    }
 
     const { status, data } = error.response;
 

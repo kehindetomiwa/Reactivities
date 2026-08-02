@@ -1,8 +1,10 @@
-namespace Domain;
+using Application.Profiles.DTOs;
 
-public class Activity
+namespace Application.Activities.DTOs;
+
+public class ActivityDto
 {
-    public string Id { get; set; } = Guid.NewGuid().ToString();
+    public required string Id { get; set; }
     public required string Title { get; set; }
 
     public DateTime Date { get; set; }
@@ -12,6 +14,9 @@ public class Activity
 
     public bool IsCancelled { get; set; }
 
+    public required string HostDisplayName { get; set; } = null!;
+    public required string HostId { get; set; } = null!;
+
     // location props
     public required string City { get; set; }
     public required string Venue { get; set; }
@@ -20,5 +25,5 @@ public class Activity
     public double Longitude { get; set; }
 
     // navigation props
-    public ICollection<ActivityAttendee> Attendees { get; set; } = [];
+    public ICollection<UserProfile> Attendees { get; set; } = [];
 }
