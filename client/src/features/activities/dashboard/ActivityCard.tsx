@@ -12,6 +12,7 @@ import {
   Typography,
 } from "@mui/material";
 import { Link } from "react-router";
+import AvatarPopover from "../../../app/shared/components/AvatarPopover";
 
 type Props = {
   activity: Activity;
@@ -38,9 +39,16 @@ const metaLabel = {
 } as const;
 
 export default function ActivityCard({ activity }: Props) {
-  // No auth yet — these stay hard-coded until profiles land.
-  const isHost = false;
-  const isGoing = false;
+  const label = activity.isHost
+    ? "You are hosting"
+    : activity.isGoing
+      ? "You are going"
+      : null;
+  const color = activity.isHost
+    ? "secondary"
+    : activity.isGoing
+      ? "warning"
+      : "default";
 
   const isCancelled = activity.isCancelled;
   const accent = isCancelled
@@ -107,7 +115,9 @@ export default function ActivityCard({ activity }: Props) {
               py: 1,
             }}
           >
-            <Typography sx={{ ...metaLabel, fontSize: "0.625rem", color: accent }}>
+            <Typography
+              sx={{ ...metaLabel, fontSize: "0.625rem", color: accent }}
+            >
               {month}
             </Typography>
             <Typography
@@ -150,7 +160,7 @@ export default function ActivityCard({ activity }: Props) {
                 Hosted by{" "}
                 <Box
                   component={Link}
-                  to="/profile/bob"
+                  to={`/profiles/${activity.hostId}`}
                   sx={{
                     color: ink,
                     fontWeight: 600,
@@ -158,7 +168,7 @@ export default function ActivityCard({ activity }: Props) {
                     "&:hover": { textDecoration: "underline" },
                   }}
                 >
-                  Bob
+                  {activity.hostDisplayName}
                 </Box>
               </Typography>
             </Stack>
@@ -177,15 +187,16 @@ export default function ActivityCard({ activity }: Props) {
                 }}
               />
             )}
-            {(isHost || isGoing) && (
+            {(activity.isHost || activity.isGoing) && (
               <Chip
-                label={isHost ? "You are hosting" : "You are going"}
+                label={label}
+                color={color}
                 size="small"
                 sx={{
                   ...metaLabel,
                   borderRadius: 1.5,
-                  color: isHost ? "#6B5613" : ink,
-                  backgroundColor: isHost ? "#F9E8A2" : "#E8F3F6",
+                  color: activity.isHost ? "#6B5613" : ink,
+                  backgroundColor: activity.isHost ? "#F9E8A2" : "#E8F3F6",
                 }}
               />
             )}
@@ -236,8 +247,20 @@ export default function ActivityCard({ activity }: Props) {
           alignItems: "center",
         }}
       >
-        {/* Attendee list lands here once profiles exist. */}
-        <Typography sx={{ ...metaLabel, color: muted }}>Attendees</Typography>
+        <Box
+          sx={{
+            display: "flex",
+            gap: 1,
+            alignItems: "center",
+            py: 3,
+            pl: 3,
+            backgroundColor: "grey.200",
+          }}
+        >
+          {activity.attendees.map((attendee) => (
+            <AvatarPopover key={attendee.id} profile={attendee} />
+          ))}
+        </Box>
         <Button
           component={Link}
           to={`/activities/${activity.id}`}
