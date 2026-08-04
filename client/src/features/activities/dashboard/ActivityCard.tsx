@@ -155,7 +155,11 @@ export default function ActivityCard({ activity }: Props) {
               direction="row"
               sx={{ alignItems: "center", gap: 1, mt: 1.25 }}
             >
-              <Avatar sx={{ width: 26, height: 26, fontSize: "0.75rem" }} />
+              <Avatar
+                src={activity.hostImageUrl}
+                sx={{ width: 26, height: 26, fontSize: "0.75rem" }}
+                alt="Image of host"
+              />
               <Typography sx={{ fontSize: "0.875rem", color: muted }}>
                 Hosted by{" "}
                 <Box
@@ -239,21 +243,25 @@ export default function ActivityCard({ activity }: Props) {
 
       <Divider sx={{ borderColor: hairline }} />
 
+      {/* Attendee strip spans the full card width; the action sits on its own row below. */}
       <CardActions
         sx={{
-          px: 3,
-          py: 1.5,
-          justifyContent: "space-between",
-          alignItems: "center",
+          p: 0,
+          flexDirection: "column",
+          alignItems: "stretch",
+          "& > :not(style) ~ :not(style)": { ml: 0 },
         }}
       >
         <Box
           sx={{
             display: "flex",
+            flexWrap: "wrap",
             gap: 1,
             alignItems: "center",
-            py: 3,
-            pl: 3,
+            width: "100%",
+            minHeight: 56,
+            px: 3,
+            py: 1.5,
             backgroundColor: "grey.200",
           }}
         >
@@ -261,21 +269,25 @@ export default function ActivityCard({ activity }: Props) {
             <AvatarPopover key={attendee.id} profile={attendee} />
           ))}
         </Box>
-        <Button
-          component={Link}
-          to={`/activities/${activity.id}`}
-          endIcon={<ArrowForward />}
-          sx={{
-            ...metaLabel,
-            borderRadius: 2,
-            px: 2,
-            color: "#fff",
-            backgroundColor: ink,
-            "&:hover": { backgroundColor: "#1B2C5E" },
-          }}
+        <Box
+          sx={{ display: "flex", justifyContent: "flex-end", px: 3, py: 1.5 }}
         >
-          View
-        </Button>
+          <Button
+            component={Link}
+            to={`/activities/${activity.id}`}
+            endIcon={<ArrowForward />}
+            sx={{
+              ...metaLabel,
+              borderRadius: 2,
+              px: 2,
+              color: "#fff",
+              backgroundColor: ink,
+              "&:hover": { backgroundColor: "#1B2C5E" },
+            }}
+          >
+            View
+          </Button>
+        </Box>
       </CardActions>
     </Card>
   );

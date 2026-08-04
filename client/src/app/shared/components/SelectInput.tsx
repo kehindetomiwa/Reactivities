@@ -27,6 +27,7 @@ export default function SelectInput<T extends FieldValues>(props: Props<T>) {
         value={field.value || ""}
         label={props.label}
         onChange={field.onChange}
+        onBlur={field.onBlur}
       >
         {props.items.map((item) => (
           <MenuItem key={item.value} value={item.value}>

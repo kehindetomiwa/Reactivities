@@ -8,11 +8,21 @@ import {
 type Props<T extends FieldValues> = UseControllerProps<T> & TextFieldProps;
 
 export default function TextInput<T extends FieldValues>(props: Props<T>) {
-  const { field, fieldState } = useController({ ...props });
+  // Split the controller-only props off: they are not valid TextField props, so
+  // spreading them reaches the DOM and React warns about unknown attributes.
+  const { control, rules, defaultValue, shouldUnregister, ...textFieldProps } =
+    props;
+  const { field, fieldState } = useController({
+    control,
+    rules,
+    defaultValue,
+    shouldUnregister,
+    name: props.name,
+  } as UseControllerProps<T>);
 
   return (
     <TextField
-      {...props}
+      {...textFieldProps}
       {...field}
       value={field.value ?? ""}
       fullWidth

@@ -8,11 +8,26 @@ import { DateTimePicker, type DateTimePickerProps } from "@mui/x-date-pickers";
 type Props<T extends FieldValues> = UseControllerProps<T> & DateTimePickerProps;
 
 export default function DateTimeInput<T extends FieldValues>(props: Props<T>) {
-  const { field, fieldState } = useController({ ...props });
+  // Same as TextInput: keep the react-hook-form-only props off the picker.
+  const {
+    control,
+    rules,
+    defaultValue,
+    shouldUnregister,
+    name,
+    ...pickerProps
+  } = props;
+  const { field, fieldState } = useController({
+    control,
+    rules,
+    defaultValue,
+    shouldUnregister,
+    name,
+  } as UseControllerProps<T>);
 
   return (
     <DateTimePicker
-    {...props}
+    {...pickerProps}
     value={field.value ? new Date(field.value): null}
     onChange={value => {field.onChange(value)}}
     sx={{width: '100%'}}
