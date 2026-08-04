@@ -58,6 +58,16 @@ pipeline, and on completion:
 Network panel's Timing tab, so it gives per-request server cost without extra
 client code.
 
+**Amended during implementation.** The above is only true same-origin. The client
+runs on `:3000` and the API on `:5001`, so every response is cross-origin, and
+browsers withhold `Server-Timing` from cross-origin resources unless the response
+also carries `Timing-Allow-Origin`. Verified empirically: with the header alone,
+`PerformanceResourceTiming.serverTiming` came back as an empty array in the
+browser. The middleware therefore also sets `Timing-Allow-Origin` to the request's
+`Origin`, **gated to the Development environment** — it opts whichever origin asked
+into reading timing data, which is fine for local work and not something to ship
+enabled by default.
+
 The elapsed time must be written to the header *before* the response body starts
 flushing. The middleware registers an `HttpResponse.OnStarting` callback to set the
 header, since writing to `Headers` after the response has begun throws.

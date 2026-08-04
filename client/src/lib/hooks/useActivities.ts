@@ -114,10 +114,12 @@ export const useActivities = (id?: string) => {
         queryClient.setQueryData<Activity>(["activities", id], context.previousActivity);
       }
     },
-    onSettled: async () => {
-      // Reconcile the optimistic patch with the server, and refresh the list
-      // cache — the prefix key matches both ["activities"] and ["activities", id].
-      await queryClient.invalidateQueries({ queryKey: ["activities"] });
+    onSettled: async (_data, _error, id) => {
+      // Reconcile the optimistic patch with the server for *this* activity only.
+      // The bare ["activities"] prefix also matched the list cache, so every
+      // attendance toggle refetched the whole list; the list re-runs on its own
+      // once staleTime expires.
+      await queryClient.invalidateQueries({ queryKey: ["activities", id] });
     },
   });
 

@@ -16,7 +16,19 @@ import { LocalizationProvider } from "@mui/x-date-pickers";
 import {AdapterDateFns} from "@mui/x-date-pickers/AdapterDateFns"
 
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      // Default is 0, which refetches on every mount - revisiting /activities
+      // always re-hit the API even though nothing had changed.
+      staleTime: 1000 * 60,
+      refetchOnWindowFocus: false,
+      // Default is 3, turning one genuinely failing request into four round
+      // trips before the error surfaces to the user.
+      retry: 1,
+    },
+  },
+});
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
