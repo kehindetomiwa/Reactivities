@@ -39,6 +39,7 @@ builder.Services.AddScoped<IPhotoService, PhotoService>();
 builder.Services.AddAutoMapper(typeof(MappingProfiles).Assembly);
 builder.Services.AddValidatorsFromAssemblyContaining<CreateActivityValidator>();
 builder.Services.AddTransient<ExceptionMiddleware>();
+builder.Services.AddTransient<RequestTimingMiddleware>();
 builder.Services.AddIdentityApiEndpoints<User>(opt =>
     {
         opt.User.RequireUniqueEmail = true;
@@ -77,6 +78,10 @@ app.UseCors(
         "https://localhost:3000"
     )
 );
+
+// After UseCors deliberately: CORS short-circuits OPTIONS preflights, and timing
+// them would double the log volume with entries that measure nothing.
+app.UseMiddleware<RequestTimingMiddleware>();
 
 app.UseAuthentication();
 app.UseAuthorization();
