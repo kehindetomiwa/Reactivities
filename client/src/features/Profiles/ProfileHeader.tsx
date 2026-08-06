@@ -9,16 +9,14 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
+import { useParams } from "react-router";
+import { useProfile } from "../../lib/hooks/useProfile";
 
-type Props = {
-  profile: Profile;
-  isCurrentUser: boolean;
-};
+export default function ProfileHeader() {
+  const { id } = useParams();
+  const { isCurrentUser, profile, updateFollowing } = useProfile(id);
 
-export default function ProfileHeader({ profile, isCurrentUser }: Props) {
-  // The API's UserProfile DTO has no follow fields yet, so these stay undefined
-  // until the backend grows them - fall back rather than render "undefined".
-  const isFollowing = profile.following ?? false;
+  if (!profile) return null;
   return (
     <Paper
       elevation={3}
@@ -37,7 +35,7 @@ export default function ProfileHeader({ profile, isCurrentUser }: Props) {
             />
             <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
               <Typography variant="h4">{profile.displayName}</Typography>
-              {isFollowing && (
+              {profile.following && (
                 <Chip
                   variant="outlined"
                   color="secondary"
@@ -61,23 +59,28 @@ export default function ProfileHeader({ profile, isCurrentUser }: Props) {
             >
               <Box sx={{ textAlign: "center" }}>
                 <Typography variant="h6">Followers</Typography>
-                <Typography variant="h6">{profile.followersCount ?? 0}</Typography>
+                <Typography variant="h6">{profile.followersCount}</Typography>
               </Box>
               <Box sx={{ textAlign: "center" }}>
                 <Typography variant="h6">Following</Typography>
-                <Typography variant="h6">{profile.followingCount ?? 0}</Typography>
+                <Typography variant="h6">{profile.followingCount}</Typography>
               </Box>
             </Box>
-            <Divider sx={{ width: "100%" }} />
+
             {/* You cannot follow yourself, so the action is hidden on your own profile. */}
             {!isCurrentUser && (
-              <Button
-                fullWidth
-                variant="outlined"
-                color={isFollowing ? "error" : "success"}
-              >
-                {isFollowing ? "Unfollow" : "Follow"}
-              </Button>
+              <>
+                <Divider sx={{ width: "100%" }} />
+                <Button
+                  onClick={() => updateFollowing.mutate()}
+                  disabled={updateFollowing.isPending}
+                  fullWidth
+                  variant="outlined"
+                  color={profile.following ? "error" : "success"}
+                >
+                  {profile.following ? "Unfollow" : "Follow"}
+                </Button>
+              </>
             )}
           </Stack>
         </Grid>

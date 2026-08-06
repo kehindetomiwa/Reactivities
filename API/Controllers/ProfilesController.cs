@@ -3,6 +3,7 @@ using Application.Profiles.Commands;
 using Domain;
 using Microsoft.AspNetCore.Mvc;
 using Application.Profiles.DTOs;
+using System.Reflection.Metadata;
 
 namespace API.Controllers;
 
@@ -51,4 +52,14 @@ public class ProfilesController : BaseApiController
         return HandleResult(await Mediator.Send(new EditProfile.Command { ProfileDto = profileDto }));
     }
 
+    [HttpPost("{userId}/follow")]
+    public async Task<ActionResult> FollowToggle(string userId)
+    {
+        return HandleResult(await Mediator.Send(new FollowToggle.Command { TargetUserId = userId }));
+    }
+    [HttpGet("{userId}/follow-list")]
+    public async Task<ActionResult> GetFollowings(string userId, string predicate)
+    {
+        return HandleResult(await Mediator.Send(new GetFollowings.Query { UserId = userId, Predicate = predicate }));
+    }
 }
