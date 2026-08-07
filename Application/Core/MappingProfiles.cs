@@ -36,6 +36,8 @@ public class MappingProfiles : Profile
             )));
         
         
+        CreateMap<Activity, UserActivityDto>();
+
         CreateMap<EditProfileDto, User>();
         CreateMap<Comment, CommentDto>()
             .ForMember(d => d.DisplayName, o => o.MapFrom(s => s.User.DisplayName))

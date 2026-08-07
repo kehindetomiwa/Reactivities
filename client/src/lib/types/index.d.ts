@@ -26,6 +26,15 @@ type Activity = {
   hostImageUrl?: string;
 };
 
+// Mirrors Application/Profiles/DTOs/UserActivityDto.cs - the trimmed-down
+// activity shape the profile Events tab renders.
+type UserActivity = {
+  id: string;
+  title: string;
+  category: string;
+  date: string;
+};
+
 type Profile = {
   id: string;
   displayName: string;
