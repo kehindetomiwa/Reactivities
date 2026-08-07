@@ -5,7 +5,7 @@ import {
   Typography,
   Container,
   Button,
-  LinearProgress,
+  CircularProgress,
 } from "@mui/material";
 import Group from "@mui/icons-material/Group";
 import { NavLink } from "react-router";
@@ -38,9 +38,8 @@ export default function NavBar() {
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar
-        position="static"
+        position="fixed"
         sx={{
-          position: "relative",
           backgroundImage:
             "linear-gradient(135deg, #182a73 0%, #218aae 69%, #20a7ac 89%)",
         }}
@@ -50,7 +49,12 @@ export default function NavBar() {
             <Button
               component={NavLink}
               to="/"
-              sx={{ display: "flex", alignItems: "center", gap: 1 }}
+              sx={{
+                position: "relative",
+                display: "flex",
+                alignItems: "center",
+                gap: 1,
+              }}
             >
               <Group fontSize="large" />
               <Typography
@@ -59,6 +63,26 @@ export default function NavBar() {
               >
                 Reactivities
               </Typography>
+              {/* Must stay inside the Button: `left: 105%` is relative to the
+                  nearest positioned ancestor, and the Button is the one with
+                  `position: relative`. As a sibling it resolved against the
+                  Toolbar instead and landed off-screen. */}
+              <Observer>
+                {() =>
+                  uiStore.isLoading ? (
+                    <CircularProgress
+                      size={20}
+                      thickness={7}
+                      sx={{
+                        position: "absolute",
+                        color: "white",
+                        top: "30%",
+                        left: "105%",
+                      }}
+                    />
+                  ) : null
+                }
+              </Observer>
             </Button>
 
             <Box sx={{ display: "flex", gap: 2 }}>
@@ -82,22 +106,6 @@ export default function NavBar() {
             </Box>
           </Toolbar>
         </Container>
-        <Observer>
-          {() =>
-            uiStore.isLoading ? (
-              <LinearProgress
-                color="secondary"
-                sx={{
-                  position: "absolute",
-                  bottom: 0,
-                  left: 0,
-                  right: 0,
-                  height: 4,
-                }}
-              />
-            ) : null
-          }
-        </Observer>
       </AppBar>
     </Box>
   );

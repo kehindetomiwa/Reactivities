@@ -1,4 +1,5 @@
 using System;
+using System.Data;
 using Application.Activities.Commands;
 using Application.Activities.DTOs;
 using Application.Activities.Queries;
@@ -14,12 +15,12 @@ namespace API.Controllers
     ) : BaseApiController
     {
         [HttpGet]
-        public async Task<ActionResult<List<ActivityDto>>> GetActivities()
+        public async Task<ActionResult<PageList<ActivityDto, DateTime?>>> GetActivities([FromQuery]ActivityParams activityParams)
         {
-            return await Mediator.Send(new GetActivityList.Query());
+            return HandleResult(await Mediator.Send(new GetActivityList.Query { Params = activityParams }));
         }
 
-    
+
         [HttpGet("{id}")]
         public async Task<ActionResult<ActivityDto>> GetActivityDetail(string id)
         {
@@ -40,7 +41,7 @@ namespace API.Controllers
         public async Task<ActionResult> EditActivity(string id, EditActivityDto activityDto)
         {
             activityDto.Id = id;
-            return HandleResult(await Mediator.Send(new EditActivity.Command {ActivityDto = activityDto }));
+            return HandleResult(await Mediator.Send(new EditActivity.Command { ActivityDto = activityDto }));
 
         }
 
