@@ -3,7 +3,7 @@ import agent from "../api/agent";
 import { useMemo } from "react";
 import type { EditProfileSchema } from "../Schemas/editProfileSchema";
 
-export const useProfile = (id?: string, predicate?: string) => {
+export const useProfile = (id?: string, predicate?: string, filter?: string) => {
   const queryClient = useQueryClient();
   const { data: profile, isLoading: loadingProfile } = useQuery({
     queryKey: ["profile", id],
@@ -42,6 +42,23 @@ export const useProfile = (id?: string, predicate?: string) => {
       return response.data;
     },
     enabled: !!id && !!predicate,
+  });
+
+  const { data: userActivities, isLoading: loadingUserActivities } = useQuery<
+    UserActivity[]
+  >({
+    // filter belongs in the key for the same reason predicate does above -
+    // otherwise the three Events tabs share one cache entry.
+    queryKey: ["user-activities", id, filter],
+    queryFn: async () => {
+      const response = await agent.get<UserActivity[]>(
+        `/profiles/${id}/activities?filter=${filter}`,
+      );
+      return response.data;
+    },
+    // filter starts as undefined, so this stays disabled until the Events tab
+    // mounts and picks one.
+    enabled: !!id && !!filter,
   });
 
   const uploadPhoto = useMutation<Photo, Error, Blob>({
@@ -174,6 +191,8 @@ export const useProfile = (id?: string, predicate?: string) => {
     updateProfile,
     updateFollowing,
     followings,
-    loadingFollowings
+    loadingFollowings,
+    userActivities,
+    loadingUserActivities
   };
 };
