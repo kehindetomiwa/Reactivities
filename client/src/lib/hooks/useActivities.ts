@@ -42,7 +42,6 @@ export const useActivities = (id?: string) => {
     },
     // The cursor is the last activity's date (DateTime? on the server), so the
     // first page sends nothing and every later page sends a string.
-    staleTime: 1000 * 60 * 5,
     placeholderData: keepPreviousData,
     initialPageParam: null as string | null,
     getNextPageParam: (lastPage) => lastPage.nextCursor,
