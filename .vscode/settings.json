@@ -1,1 +1,4 @@
-{}
+{
+  "appService.defaultWebAppToDeploy": "/subscriptions/c6cbed5b-fc25-4efa-b653-bc54d97f2d70/resourceGroups/reactivities-rg/providers/Microsoft.Web/sites/reactivity",
+  "appService.deploySubpath": "API/bin/Publish"
+}
